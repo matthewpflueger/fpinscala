@@ -4,7 +4,10 @@ import Keys._
 object FPInScalaBuild extends Build {
   val opts = Project.defaultSettings ++ Seq(
     scalaVersion := "2.11.5",
-    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+    libraryDependencies ++= List("com.lihaoyi" %% "utest" % "0.3.1"),
+    testFrameworks += new TestFramework("utest.runner.Framework")
+
   )
 
   lazy val root =
