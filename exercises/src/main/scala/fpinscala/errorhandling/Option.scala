@@ -61,15 +61,17 @@ object Option {
     case _ => None
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
-    @tailrec
-    def loop(a: List[Option[A]], b: Option[List[A]]): Option[List[A]] = a match {
-      case None :: t => None
-      case Some(s) :: t => loop(t, Some(s :: b.getOrElse(List.empty[A])))
-      case Nil => b.map(_.reverse)
-    }
-    loop(a, Some(List.empty[A]))
-  }
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = sys.error("todo")
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(_ match {
+    case None => None
+    case s => s
+  })
+
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+    def loop(a: List[A], b: List[B]): Option[List[B]] = a match {
+      case Nil => Some(b.reverse)
+      case h :: t => f(h).flatMap(i => loop(t, i :: b))
+    }
+    loop(a, List.empty[B])
+  }
 }

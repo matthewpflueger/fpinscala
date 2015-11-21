@@ -2,6 +2,8 @@ package fpinscala.errorhandling
 
 import utest._
 
+import scala.util.Try
+
 object OptionTest extends TestSuite {
   val tests = TestSuite {
     'map {
@@ -49,6 +51,17 @@ object OptionTest extends TestSuite {
       assert(Option.sequence(List(Some("a"), None, Some("c"))) == None)
       assert(Option.sequence(List(None)) == None)
       assert(Option.sequence(List.empty[Option[String]]) == Some(List.empty[String]))
+    }
+
+    'traverse {
+      assert(Option.traverse(List("1")) { s =>
+        try { Some(s.toInt) } catch { case t: Throwable => None } } == Some(List(1)))
+      assert(Option.traverse(List("1", "2", "3")) { s =>
+          try { Some(s.toInt) } catch { case t: Throwable => None } } == Some(List(1, 2, 3)))
+      assert(Option.traverse(List.empty[String]) { s =>
+          try { Some(s.toInt) } catch { case t: Throwable => None } } == Some(List.empty[Int]))
+      assert(Option.traverse(List("1", "a", "3")) { s =>
+          try { Some(s.toInt) } catch { case t: Throwable => None } } == None)
     }
   }
 
