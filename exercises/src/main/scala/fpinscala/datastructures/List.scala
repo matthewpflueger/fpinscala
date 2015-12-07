@@ -9,12 +9,14 @@ which may be `Nil` or another `Cons`.
  */
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
-object List { // `List` companion object. Contains functions for creating and working with lists.
+object List {
+  // `List` companion object. Contains functions for creating and working with lists.
   def sumFoldLeft(ints: List[Int]): Int = foldLeft(ints, 0)(_ + _)
 
-  def sum(ints: List[Int]): Int = ints match { // A function that uses pattern matching to add up a list of integers
+  def sum(ints: List[Int]): Int = ints match {
+    // A function that uses pattern matching to add up a list of integers
     case Nil => 0 // The sum of the empty list is 0.
-    case Cons(x,xs) => x + sum(xs) // The sum of a list starting with `x` is `x` plus the sum of the rest of the list.
+    case Cons(x, xs) => x + sum(xs) // The sum of a list starting with `x` is `x` plus the sum of the rest of the list.
   }
 
   def productFoldLeft(ds: List[Double]): Double = foldLeft(ds, 0d)(_ + _)
@@ -22,14 +24,14 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product(ds: List[Double]): Double = ds match {
     case Nil => 1.0
     case Cons(0.0, _) => 0.0
-    case Cons(x,xs) => x * product(xs)
+    case Cons(x, xs) => x * product(xs)
   }
 
   def apply[A](as: A*): List[A] = // Variadic function syntax
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
-  val x = List(1,2,3,4,5) match {
+  val x = List(1, 2, 3, 4, 5) match {
     case Cons(x, Cons(2, Cons(4, _))) => x
     case Nil => 42
     case Cons(x, Cons(y, Cons(3, Cons(4, _)))) => x + y
@@ -43,19 +45,19 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
     case Nil => a2
-    case Cons(h,t) => Cons(h, append(t, a2))
+    case Cons(h, t) => Cons(h, append(t, a2))
   }
 
-  def foldRightViaLeft[A,B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((z, a) => f(a, z))
+  def foldRightViaLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((z, a) => f(a, z))
 
   // Utility functions
-  def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = as match {
-      case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
-    }
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = as match {
+    case Nil => z
+    case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+  }
 
   def sumFoldRight(ns: List[Int]) =
-    foldRight(ns, 0)((x,y) => x + y)
+    foldRight(ns, 0)((x, y) => x + y)
 
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
@@ -99,12 +101,12 @@ object List { // `List` companion object. Contains functions for creating and wo
   }
 
   /**
-   * Drop all elements that satisfy the predicate
-   * @param l
-   * @param f
-   * @tparam A
-   * @return
-   */
+    * Drop all elements that satisfy the predicate
+    * @param l
+    * @param f
+    * @tparam A
+    * @return
+    */
   def dropAll[A](l: List[A])(f: A => Boolean): List[A] = {
     @tailrec
     def loop(acc: List[A], l: List[A]): List[A] = l match {
@@ -118,7 +120,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   def init[A](l: List[A]): List[A] = {
     @tailrec
     def loop(acc: List[A], l: List[A]): List[A] = l match {
-      case Cons(x, a @ Cons(y, zs)) => loop(Cons(x, acc), a)
+      case Cons(x, a@Cons(y, zs)) => loop(Cons(x, acc), a)
       case _ => acc
     }
     reverse(loop(Nil, l))
@@ -136,16 +138,16 @@ object List { // `List` companion object. Contains functions for creating and wo
   def length[A](l: List[A]): Int = foldRight(l, 0) { (_, i) => i + 1 }
 
   //ripped from companion book :(
-  def foldLeftViaRight[A,B](as: List[A], z: B)(f: (B, A) => B): B =
+  def foldLeftViaRight[A, B](as: List[A], z: B)(f: (B, A) => B): B =
     foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
 
   @tailrec
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
     case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
     case _ => z
   }
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = reverse(foldLeft(l, Nil: List[B])((ll, li) => Cons(f(li), ll)))
+  def map[A, B](l: List[A])(f: A => B): List[B] = reverse(foldLeft(l, Nil: List[B])((ll, li) => Cons(f(li), ll)))
 
   def filter[A](l: List[A])(f: A => Boolean): List[A] = reverse(foldLeft(l, Nil: List[A]) { (acc, li) =>
     if (f(li)) Cons(li, acc) else acc
@@ -167,6 +169,15 @@ object List { // `List` companion object. Contains functions for creating and wo
       case (Cons(lh, ltt), _) => loop(ltt, sub)
     }
     loop(l, sub)
+  }
+
+  def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = {
+    @tailrec
+    def loop(l1: List[A], l2: List[B], acc: List[C]): List[C] = (l1, l2) match {
+      case (Cons(a1, t1), Cons(a2, t2)) => loop(t1, t2, Cons(f(a1, a2), acc))
+      case (_, _) => acc
+    }
+    reverse(loop(l1, l2, Nil))
   }
 
 }

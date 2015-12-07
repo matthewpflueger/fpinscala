@@ -84,6 +84,10 @@ object ListTest extends TestSuite {
       assert(List.tail(l2) == Cons(4, Cons(6, Cons(8, Nil))))
     }
 
+    'zipWith {
+      assert(List.zipWith(List(1,2,3), List(4,5,6))(_ + _) == List(5,7,9))
+    }
+
     'hasSubsequence {
       val l1 = Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil)))))))))
       val l2 = Cons(1, Cons(2, Nil))
