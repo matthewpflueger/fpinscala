@@ -53,7 +53,7 @@ object Option {
     else Some(xs.sum / xs.length)
 
   def variance(xs: Seq[Double]): Option[Double] =
-    mean(xs).map[Seq[Double]](m => xs.map(d => Math.pow(d - m, 2))).flatMap(mean(_))
+    mean(xs).map[Seq[Double]](m => xs.map(d => Math.pow(d - m, 2))).flatMap(mean)
 
 
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = (a, b) match {
